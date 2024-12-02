@@ -4,12 +4,24 @@ const handlebarsWax = require('handlebars-wax');
 const moment = require('moment');
 
 handlebars.registerHelper({
-  removeProtocol: url => url.replace(/.*?:\/\//g, ''),
+  removeProtocol: (url) => url.replace(/.*?:\/\//g, ''),
   concat: (...args) => args.filter(arg => typeof arg !== 'object').join(''),
   // Arguments: {address, city, subdivision, postalCode, countryCode}
   // formatAddress: (...args) => addressFormat(args).join(' '),
   formatAddress: (...args) => args.filter(arg => typeof arg !== 'object').join(' '),
-  formatDate: date => moment(date).format('MM/YYYY'),
+  formatDate: (date) => {
+    let formattedDate;
+
+    if (date === date.toLowerCase('present')) {
+      formattedDate = 'Present'
+    } else if (moment(date).isValid()) {
+      formattedDate = moment(date).format('MM/YYYY')
+    } else {
+      throw new Error('Date entered is not valid or "Present"', date)
+    }
+
+    return formattedDate;
+  },
   lowercase: s => s.toLowerCase(),
   eq: (a, b) => a === b,
 });
